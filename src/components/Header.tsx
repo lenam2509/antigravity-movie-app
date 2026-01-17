@@ -154,16 +154,60 @@ const Header: React.FC = () => {
                         <Link to="/watchlist" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
                             <Bookmark size={16} /> Danh Sách ({watchlist.length})
                         </Link>
-                        <form onSubmit={handleSearch} className="relative mt-2">
-                            <input
-                                type="text"
-                                placeholder="Tìm kiếm..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-white/10 border border-white/20 rounded-full pl-10 pr-4 py-2 text-sm"
-                            />
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        </form>
+                        <div className="relative mt-2">
+                            <form onSubmit={handleSearch}>
+                                <input
+                                    type="text"
+                                    placeholder="Tìm kiếm..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onFocus={() => searchQuery.trim().length >= 2 && setShowResults(true)}
+                                    className="w-full bg-white/10 border border-white/20 rounded-full pl-10 pr-4 py-2 text-sm"
+                                />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                                {isLoading && (
+                                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 text-primary animate-spin" size={16} />
+                                )}
+                            </form>
+
+                            {/* Mobile Search Results Dropdown */}
+                            {showResults && (searchResults.length > 0 || isLoading) && (
+                                <div className="absolute top-full left-0 right-0 mt-2 glass-dark rounded-xl overflow-hidden shadow-2xl border border-white/10 z-50">
+                                    <div className="max-h-96 overflow-y-auto custom-scrollbar">
+                                        {isLoading ? (
+                                            <div className="p-4 text-center text-sm text-gray-400">Đang tìm kiếm...</div>
+                                        ) : (
+                                            searchResults.map((movie) => (
+                                                <div
+                                                    key={movie._id}
+                                                    onClick={() => {
+                                                        handleResultClick(movie.slug);
+                                                        setIsMenuOpen(false);
+                                                    }}
+                                                    className="flex gap-3 p-3 hover:bg-white/10 cursor-pointer transition-colors border-b border-white/5 last:border-0"
+                                                >
+                                                    <div className="w-12 h-16 rounded-lg overflow-hidden shrink-0">
+                                                        <img
+                                                            src={movie.thumb_url.startsWith('http') ? movie.thumb_url : `${IMAGE_CDN}${movie.thumb_url}`}
+                                                            alt={movie.name}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                    <div className="flex flex-col justify-center overflow-hidden">
+                                                        <h4 className="text-sm font-semibold text-white truncate">{movie.name}</h4>
+                                                        <p className="text-xs text-gray-400 truncate">{movie.origin_name}</p>
+                                                        <p className="text-xs text-primary mt-1">{movie.year}</p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                    {!isLoading && searchResults.length === 0 && searchQuery.length >= 2 && (
+                                        <div className="p-4 text-center text-sm text-gray-400">Không tìm thấy kết quả</div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </nav>
                 </div>
             )}
