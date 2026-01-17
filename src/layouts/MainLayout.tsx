@@ -6,8 +6,7 @@ const Footer: React.FC = () => (
     <footer className="border-t border-white/10 py-10 mt-20">
         <div className="container mx-auto px-4 text-center">
             <p className="text-gray-400 text-sm">
-                © {new Date().getFullYear()} OPhim17. All rights reserved.
-                <span className="block mt-2">Sử dụng API từ ophim17.cc</span>
+                © {new Date().getFullYear()} Antigravity Movie. All rights reserved.
             </p>
         </div>
     </footer>
