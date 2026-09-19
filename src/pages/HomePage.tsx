@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getNewMovies } from '../api/ophim';
 import MovieCard from '../components/MovieCard';
@@ -7,7 +8,9 @@ import HeroCarousel from '../components/HeroCarousel';
 import { Loader2 } from 'lucide-react';
 
 const HomePage: React.FC = () => {
-    const [page, setPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const requestedPage = Number(searchParams.get('page') || '1');
+    const page = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['newMovies', page],
@@ -35,7 +38,15 @@ const HomePage: React.FC = () => {
     const totalPages = pagination ? Math.ceil(pagination.totalItems / pagination.totalItemsPerPage) : 1;
 
     const handlePageChange = (newPage: number) => {
-        setPage(newPage);
+        setSearchParams((previousParams) => {
+            const nextParams = new URLSearchParams(previousParams);
+            if (newPage === 1) {
+                nextParams.delete('page');
+            } else {
+                nextParams.set('page', newPage.toString());
+            }
+            return nextParams;
+        });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
