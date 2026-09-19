@@ -1,7 +1,8 @@
+import { getMovieImageUrl } from '../utils/movieImage';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, Film, Menu, X, Loader2, Bookmark } from 'lucide-react';
-import { searchMovies, IMAGE_CDN } from '../api/ophim';
+import { searchMovies } from '../api/ophim';
 import type { Movie } from '../types';
 import { useWatchlist } from '../context/WatchlistContext';
 import GenreMenu from './GenreMenu';
@@ -117,7 +118,7 @@ const Header: React.FC = () => {
                                             >
                                                 <div className="w-12 h-16 rounded-lg overflow-hidden shrink-0">
                                                     <img
-                                                        src={movie.thumb_url.startsWith('http') ? movie.thumb_url : `${IMAGE_CDN}${movie.thumb_url}`}
+                                                        src={getMovieImageUrl(movie.thumb_url)}
                                                         alt={movie.name}
                                                         className="w-full h-full object-cover"
                                                     />
@@ -189,7 +190,7 @@ const Header: React.FC = () => {
                                                 >
                                                     <div className="w-12 h-16 rounded-lg overflow-hidden shrink-0">
                                                         <img
-                                                            src={movie.thumb_url.startsWith('http') ? movie.thumb_url : `${IMAGE_CDN}${movie.thumb_url}`}
+                                                            src={getMovieImageUrl(movie.thumb_url)}
                                                             alt={movie.name}
                                                             className="w-full h-full object-cover"
                                                         />

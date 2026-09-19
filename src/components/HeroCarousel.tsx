@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Play, Info, ChevronLeft, ChevronRight } from 'lucide-react';
-import { IMAGE_CDN } from '../api/ophim';
+import { getMovieImageUrl } from '../utils/movieImage';
 import type { Movie } from '../types';
 
 interface HeroCarouselProps {
@@ -37,7 +37,7 @@ const HeroCarousel: React.FC<HeroCarouselProps> = ({ movies }) => {
             <div
                 className="absolute inset-0 transition-all duration-1000 ease-in-out scale-105"
                 style={{
-                    backgroundImage: `url(${movie.poster_url.startsWith('http') ? movie.poster_url : `${IMAGE_CDN}${movie.poster_url}`})`,
+                    backgroundImage: `url(${getMovieImageUrl(movie.poster_url)})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center 20%',
                 }}

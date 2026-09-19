@@ -1,7 +1,8 @@
+import { getMovieImageUrl } from '../utils/movieImage';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getMovieDetail, IMAGE_CDN } from '../api/ophim';
+import { getMovieDetail } from '../api/ophim';
 import { Loader2, Play, Calendar, Film, Clock, Plus, Check } from 'lucide-react';
 import { useWatchlist } from '../context/WatchlistContext';
 import SimilarMovies from '../components/SimilarMovies';
@@ -60,7 +61,7 @@ const MovieDetailPage: React.FC = () => {
                 <div className="w-2/3 max-w-[300px] mx-auto md:mx-0 md:w-1/3 lg:w-1/4 shrink-0">
                     <div className="rounded-2xl overflow-hidden movie-card-shadow aspect-[2/3]">
                         <img
-                            src={movie.thumb_url.startsWith('http') ? movie.thumb_url : `${IMAGE_CDN}${movie.thumb_url}`}
+                            src={getMovieImageUrl(movie.thumb_url)}
                             alt={movie.name}
                             className="w-full h-full object-cover"
                         />

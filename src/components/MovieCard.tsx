@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Movie } from '../types';
-import { IMAGE_CDN } from '../api/ophim';
+import { getMovieImageUrl } from '../utils/movieImage';
 import { Play } from 'lucide-react';
 
 interface MovieCardProps {
@@ -9,9 +9,7 @@ interface MovieCardProps {
 }
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie }) => {
-    const imageUrl = movie.thumb_url.startsWith('http')
-        ? movie.thumb_url
-        : `${IMAGE_CDN}${movie.thumb_url}`;
+    const imageUrl = getMovieImageUrl(movie.thumb_url);
 
     return (
         <Link
