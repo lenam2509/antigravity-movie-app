@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 
 interface SimilarMoviesProps {
     categorySlug: string;
-    currentMovieId: string;
+    currentMovieId: string | number;
 }
 
 const SimilarMovies: React.FC<SimilarMoviesProps> = ({ categorySlug, currentMovieId }) => {
@@ -17,7 +17,7 @@ const SimilarMovies: React.FC<SimilarMoviesProps> = ({ categorySlug, currentMovi
                 // Try to get by category slug
                 const res = await getMoviesByCategory(categorySlug);
                 return res.data;
-            } catch (err) {
+            } catch {
                 // Fallback to new movies if category fails
                 const res = await getNewMovies();
                 return res.data;

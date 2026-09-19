@@ -17,7 +17,7 @@ const SearchPage: React.FC = () => {
         setPage(pageParam);
     }, [pageParam, keyword]);
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, error } = useQuery({
         queryKey: ['searchMovies', keyword, page],
         queryFn: () => searchMovies(keyword, page),
         enabled: !!keyword,
@@ -44,6 +44,10 @@ const SearchPage: React.FC = () => {
                 <p className="text-xl text-gray-400">Nhập từ khóa để tìm kiếm phim.</p>
             </div>
         );
+    }
+
+    if (error) {
+        return <div className="text-center py-20 text-red-500">Đã có lỗi xảy ra khi tìm kiếm phim. Vui lòng thử lại.</div>;
     }
 
     const movies = data?.data.items || [];

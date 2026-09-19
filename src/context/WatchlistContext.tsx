@@ -5,8 +5,8 @@ import type { Movie } from '../types';
 interface WatchlistContextType {
     watchlist: Movie[];
     addToWatchlist: (movie: Movie) => void;
-    removeFromWatchlist: (movieId: string) => void;
-    isInWatchlist: (movieId: string) => boolean;
+    removeFromWatchlist: (movieId: Movie['_id']) => void;
+    isInWatchlist: (movieId: Movie['_id']) => boolean;
 }
 
 const WatchlistContext = createContext<WatchlistContextType | undefined>(undefined);
@@ -36,11 +36,11 @@ export const WatchlistProvider: React.FC<{ children: ReactNode }> = ({ children 
         });
     };
 
-    const removeFromWatchlist = (movieId: string) => {
+    const removeFromWatchlist = (movieId: Movie['_id']) => {
         setWatchlist((prev) => prev.filter(m => m._id !== movieId));
     };
 
-    const isInWatchlist = (movieId: string) => {
+    const isInWatchlist = (movieId: Movie['_id']) => {
         return !!watchlist.find(m => m._id === movieId);
     };
 

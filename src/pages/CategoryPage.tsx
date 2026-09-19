@@ -48,10 +48,6 @@ const CategoryPage: React.FC = () => {
         ? Math.ceil(data.data.params.pagination.totalItems / data.data.params.pagination.totalItemsPerPage)
         : 1;
 
-    // The API response for categories has a slightly different pagination structure in some cases,
-    // but based on ophim.ts, it returns APIResponse<Movie>.
-    // Let's assume it matches the structure used in HomePage.
-
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between border-l-4 border-primary pl-4">

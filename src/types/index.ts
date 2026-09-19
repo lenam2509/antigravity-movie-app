@@ -1,5 +1,5 @@
 export interface Movie {
-    _id: string;
+    _id: string | number;
     name: string;
     slug: string;
     thumb_url: string;
@@ -42,8 +42,16 @@ export interface APIResponse<T> {
                 totalItems: number;
                 totalItemsPerPage: number;
                 currentPage: number;
+                totalPages?: number;
             };
         };
         APP_DOMAIN_CDN_IMAGE: string;
+    };
+}
+
+export interface MovieListResponse {
+    data: {
+        items: Movie[];
+        params: { pagination: NonNullable<APIResponse<Movie>['data']['params']>['pagination'] };
     };
 }
