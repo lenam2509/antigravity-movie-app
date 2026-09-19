@@ -43,3 +43,22 @@ export const searchMovies = async (keyword: string, page = 1) => {
 export const getMoviesByCategory = async (category: string, page = 1) => {
   return getMovieList(`/danh-sach/${encodeURIComponent(category)}`, { page });
 };
+
+export interface Genre {
+  _id: string | number;
+  name: string;
+  slug: string;
+}
+
+export const getGenres = async (): Promise<Genre[]> => {
+  const { data } = await api.get<{ status: string; data: { items: Genre[] } }>('/the-loai');
+  if (data?.status !== 'success' || !Array.isArray(data.data?.items) ||
+      !data.data.items.every(genre => genre && typeof genre.name === 'string' && typeof genre.slug === 'string')) {
+    throw new Error('Invalid genre list response');
+  }
+  return data.data.items;
+};
+
+export const getMoviesByGenre = async (slug: string, page = 1) => {
+  return getMovieList(`/the-loai/${encodeURIComponent(slug)}`, { page });
+};

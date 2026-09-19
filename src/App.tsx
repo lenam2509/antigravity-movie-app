@@ -31,6 +31,7 @@ function App() {
               <Route path="phim/:slug" element={<MovieDetailPage />} />
               <Route path="search" element={<SearchPage />} />
               <Route path="category/:slug" element={<CategoryPage />} />
+              <Route path="the-loai/:slug" element={<CategoryPage genre />} />
               <Route path="watchlist" element={<WatchlistPage />} />
             </Route>
           </Routes>

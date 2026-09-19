@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { getMoviesByCategory } from '../api/ophim';
+import { getGenres, getMoviesByCategory, getMoviesByGenre } from '../api/ophim';
 import MovieCard from '../components/MovieCard';
 import Pagination from '../components/Pagination';
 import { Loader2 } from 'lucide-react';
@@ -12,14 +12,22 @@ const categoryMap: Record<string, string> = {
     'hoat-hinh': 'Hoạt Hình',
 };
 
-const CategoryPage: React.FC = () => {
+const CategoryPage: React.FC<{ genre?: boolean }> = ({ genre = false }) => {
     const { slug } = useParams<{ slug: string }>();
     const [searchParams, setSearchParams] = useSearchParams();
-    const currentPage = parseInt(searchParams.get('page') || '1');
+    const requestedPage = Number(searchParams.get('page') || '1');
+    const currentPage = Number.isSafeInteger(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+
+    const { data: genres } = useQuery({
+        queryKey: ['genres'],
+        queryFn: getGenres,
+        enabled: genre,
+        staleTime: 60 * 60 * 1000,
+    });
 
     const { data, isLoading, error } = useQuery({
-        queryKey: ['moviesByCategory', slug, currentPage],
-        queryFn: () => getMoviesByCategory(slug!, currentPage),
+        queryKey: [genre ? 'moviesByGenre' : 'moviesByCategory', slug, currentPage],
+        queryFn: () => genre ? getMoviesByGenre(slug!, currentPage) : getMoviesByCategory(slug!, currentPage),
         enabled: !!slug,
     });
 
@@ -43,7 +51,9 @@ const CategoryPage: React.FC = () => {
         );
     }
 
-    const categoryTitle = categoryMap[slug || ''] || 'Danh mục';
+    const categoryTitle = genre
+        ? genres?.find(item => item.slug === slug)?.name || slug?.replaceAll('-', ' ') || 'Thể loại'
+        : categoryMap[slug || ''] || 'Danh mục';
     const totalPages = data.data.params.pagination.totalItems
         ? Math.ceil(data.data.params.pagination.totalItems / data.data.params.pagination.totalItemsPerPage)
         : 1;
@@ -59,6 +69,7 @@ const CategoryPage: React.FC = () => {
                 </span>
             </div>
 
+            {data.data.items.length === 0 && <p className="py-12 text-center text-gray-400">Chưa có phim trong mục này.</p>}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
                 {data.data.items.map((movie) => (
                     <MovieCard key={movie._id} movie={movie} />

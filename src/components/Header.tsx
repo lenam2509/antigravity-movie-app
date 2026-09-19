@@ -4,6 +4,7 @@ import { Search, Film, Menu, X, Loader2, Bookmark } from 'lucide-react';
 import { searchMovies, IMAGE_CDN } from '../api/ophim';
 import type { Movie } from '../types';
 import { useWatchlist } from '../context/WatchlistContext';
+import GenreMenu from './GenreMenu';
 
 const Header: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -77,7 +78,7 @@ const Header: React.FC = () => {
                     <Link to="/" className="hover:text-primary transition-colors">Trang Chủ</Link>
                     <Link to="/category/phim-bo" className="hover:text-primary transition-colors">Phim Bộ</Link>
                     <Link to="/category/phim-le" className="hover:text-primary transition-colors">Phim Lẻ</Link>
-                    <Link to="/category/hoat-hinh" className="hover:text-primary transition-colors">Hoạt Hình</Link>
+                    <GenreMenu />
                     <Link to="/watchlist" className="flex items-center gap-1 hover:text-primary transition-colors">
                         <Bookmark size={16} />
                         Danh Sách {watchlist.length > 0 && <span className="bg-primary text-white text-[10px] px-1.5 rounded-full">{watchlist.length}</span>}
@@ -150,7 +151,7 @@ const Header: React.FC = () => {
                         <Link to="/" onClick={() => setIsMenuOpen(false)}>Trang Chủ</Link>
                         <Link to="/category/phim-bo" onClick={() => setIsMenuOpen(false)}>Phim Bộ</Link>
                         <Link to="/category/phim-le" onClick={() => setIsMenuOpen(false)}>Phim Lẻ</Link>
-                        <Link to="/category/hoat-hinh" onClick={() => setIsMenuOpen(false)}>Hoạt Hình</Link>
+                        <GenreMenu mobile onSelect={() => setIsMenuOpen(false)} />
                         <Link to="/watchlist" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2">
                             <Bookmark size={16} /> Danh Sách ({watchlist.length})
                         </Link>
