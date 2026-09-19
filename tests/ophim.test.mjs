@@ -8,7 +8,7 @@ axios.defaults.adapter = async (config) => {
   request = config;
   return { data: payload, status: 200, statusText: 'OK', headers: {}, config };
 };
-const { getNewMovies, searchMovies, getMoviesByCategory, getMovieDetail, getGenres, getMoviesByGenre } = await import('../src/api/ophim.ts');
+const { getNewMovies, searchMovies, getMoviesByCategory, getMovieDetail, getGenres, getMoviesByGenre, getCountries } = await import('../src/api/ophim.ts');
 
 test('normalizes flat lists and preserves pagination for every list endpoint', async () => {
   const items = [{ _id: 123, name: 'Example', slug: 'example' }];
@@ -63,4 +63,25 @@ test('fetches the selected genre and page using the genre endpoint', async () =>
   assert.equal(request.params.page, 2);
   assert.deepEqual(result.data.params.pagination, pagination);
   assert.deepEqual(result.data.items, payload.items);
+});
+
+test('sends all genre filters and normalizes string page size returned by the API', async () => {
+  payload = { status: true, items: [], pagination: { totalItems: 7, totalItemsPerPage: '20', currentPage: 1, totalPages: 1 } };
+  const filters = { limit: 20, year: '2024', country: 'han-quoc', type: 'series', status: 'completed' };
+  const result = await getMoviesByGenre('hanh-dong', 1, filters);
+  assert.deepEqual(request.params, { page: 1, ...filters });
+  assert.equal(result.data.params.pagination.totalItemsPerPage, 20);
+  await getMoviesByGenre('hanh-dong', 2, filters);
+  assert.deepEqual(request.params, { page: 2, ...filters });
+  await getMoviesByGenre('hanh-dong', 1, { limit: 20, year: '', country: '', type: '', status: '' });
+  assert.deepEqual(request.params, { page: 1, limit: 20 });
+});
+
+test('loads country options and rejects malformed responses', async () => {
+  const countries = [{ _id: 10, name: 'Hàn Quốc', slug: 'han-quoc' }];
+  payload = { status: 'success', data: { items: countries } };
+  assert.deepEqual(await getCountries(), countries);
+  assert.equal(request.url, '/quoc-gia');
+  payload = { status: 'success', data: { items: [{}] } };
+  await assert.rejects(getCountries, /Invalid country list response/);
 });

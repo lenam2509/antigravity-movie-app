@@ -16,12 +16,14 @@ interface ListPayload {
 
 const getMovieList = async (path: string, params: Record<string, string | number>): Promise<MovieListResponse> => {
   const { data } = await api.get<ListPayload>(path, { params });
+  const totalItems = Number(data?.pagination?.totalItems);
+  const totalItemsPerPage = Number(data?.pagination?.totalItemsPerPage);
   if (data?.status !== true || !Array.isArray(data.items) ||
-      !Number.isFinite(data.pagination?.totalItems) || data.pagination.totalItems < 0 ||
-      !Number.isFinite(data.pagination?.totalItemsPerPage) || data.pagination.totalItemsPerPage <= 0) {
+      !Number.isFinite(totalItems) || totalItems < 0 ||
+      !Number.isFinite(totalItemsPerPage) || totalItemsPerPage <= 0) {
     throw new Error('Invalid movie list response');
   }
-  return { data: { items: data.items, params: { pagination: data.pagination } } };
+  return { data: { items: data.items, params: { pagination: { ...data.pagination, totalItems, totalItemsPerPage } } } };
 };
 
 export const getNewMovies = async (page = 1) => {
@@ -59,6 +61,28 @@ export const getGenres = async (): Promise<Genre[]> => {
   return data.data.items;
 };
 
-export const getMoviesByGenre = async (slug: string, page = 1) => {
-  return getMovieList(`/the-loai/${encodeURIComponent(slug)}`, { page });
+export interface MovieFilters {
+  limit?: number;
+  year?: string;
+  country?: string;
+  type?: string;
+  status?: string;
+}
+
+export const getMoviesByGenre = async (slug: string, page = 1, filters: MovieFilters = {}) => {
+  const params: Record<string, string | number> = { page };
+  for (const key of ['limit', 'year', 'country', 'type', 'status'] as const) {
+    const value = filters[key];
+    if (value !== undefined && value !== '') params[key] = value;
+  }
+  return getMovieList(`/the-loai/${encodeURIComponent(slug)}`, params);
+};
+
+export const getCountries = async (): Promise<Genre[]> => {
+  const { data } = await api.get<{ status: string; data: { items: Genre[] } }>('/quoc-gia');
+  if (data?.status !== 'success' || !Array.isArray(data.data?.items) ||
+      !data.data.items.every(item => item && typeof item.name === 'string' && typeof item.slug === 'string')) {
+    throw new Error('Invalid country list response');
+  }
+  return data.data.items;
 };
